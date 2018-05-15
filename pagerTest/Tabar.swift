@@ -51,7 +51,7 @@ class MenuCell: UICollectionViewCell {
 
 
 
-class Tabar: UIView {
+class Tabar: UIScrollView {
     
     var horizontalBarLeftAnchorConstraint: NSLayoutConstraint?
     var horizontalBarWidthAnchorConstraint: NSLayoutConstraint?
@@ -68,18 +68,17 @@ class Tabar: UIView {
         didSet{
             reload {
                 let indexPath = IndexPath(row: (self.tabPager?.initialControllerIndex)!, section: 0)
-                self.tabarCollectionView.scrollToItem(at:indexPath, at: UICollectionViewScrollPosition.right, animated: false)
-                 self.tabarCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: UICollectionViewScrollPosition.right)
+                
+                self.tabarCollectionView.scrollToItem(at:indexPath, at: UICollectionViewScrollPosition.left, animated: false)
+                 self.tabarCollectionView.selectItem(at: indexPath, animated: false, scrollPosition: UICollectionViewScrollPosition.left)
+                
                 let currentCell = self.tabarCollectionView.cellForItem(at: indexPath)
                
-                
-                self.horizontalBarLeftAnchorConstraint = self.horizontalBarView.leftAnchor.constraint(equalTo: self.leftAnchor, constant:  (currentCell?.frame.minX)!)
+                self.horizontalBarLeftAnchorConstraint = self.horizontalBarView.leftAnchor.constraint(equalTo: self.bottomView.leftAnchor, constant: (currentCell?.frame.minX)!)
                 self.horizontalBarLeftAnchorConstraint?.isActive = true
-
                 self.horizontalBarWidthAnchorConstraint = self.horizontalBarView.widthAnchor.constraint(equalToConstant: (currentCell?.frame.width)!)
-
                 self.horizontalBarWidthAnchorConstraint?.isActive = true
-                
+                self.bottomView.widthAnchor.constraint(equalToConstant: self.tabarCollectionView.contentSize.width).isActive = true
             }
            
         }
@@ -99,6 +98,13 @@ class Tabar: UIView {
         return collectionView
         
     }()
+    let bottomView:UIView = {
+        let view = UIView()
+        view.backgroundColor = .yellow
+//        view.isUserInteractionEnabled = false
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     let cellId = "cellId"
     
@@ -107,11 +113,20 @@ class Tabar: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.addSubview(tabarCollectionView)
+        self.addSubview(bottomView)
         NSLayoutConstraint.activate([
             tabarCollectionView.topAnchor.constraint(equalTo: self.safeAreaLayoutGuide.topAnchor),
             tabarCollectionView.leftAnchor.constraint(equalTo: self.safeAreaLayoutGuide.leftAnchor),
             tabarCollectionView.rightAnchor.constraint(equalTo: self.safeAreaLayoutGuide.rightAnchor),
-            tabarCollectionView.bottomAnchor.constraint(equalTo: self.safeAreaLayoutGuide.bottomAnchor),
+            tabarCollectionView.heightAnchor.constraint(equalToConstant: 30),
+            //
+            bottomView.topAnchor.constraint(equalTo: tabarCollectionView.bottomAnchor),
+            bottomView.leftAnchor.constraint(equalTo: self.leftAnchor),
+            bottomView.rightAnchor.constraint(equalTo: self.rightAnchor),
+            bottomView.heightAnchor.constraint(equalToConstant: 34),
+            bottomView.bottomAnchor.constraint(equalTo: self.bottomAnchor),
+//            bottomView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: 1)
+            
             ])
         
         tabarCollectionView.dataSource = self
@@ -130,17 +145,16 @@ class Tabar: UIView {
         tabarCollectionView.register(MenuCell.self, forCellWithReuseIdentifier: cellId)
     }
     func setupHorizontalBar() {
-        
-        
-       
-        horizontalBarView.backgroundColor = UIColor(white: 0.95, alpha: 1)
+    
         horizontalBarView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(horizontalBarView)
-        horizontalBarView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        horizontalBarView.heightAnchor.constraint(equalToConstant: 4).isActive = true
+        horizontalBarView.accessibilityLabel = "asdasd"
+        horizontalBarView.backgroundColor = .white
+        bottomView.addSubview(horizontalBarView)
+        horizontalBarView.topAnchor.constraint(equalTo: self.bottomView.topAnchor).isActive = true
+        horizontalBarView.bottomAnchor.constraint(equalTo: self.bottomView.bottomAnchor).isActive = true
+        horizontalBarView.heightAnchor.constraint(equalToConstant: 34).isActive = true
         
         let view = UIView()
-        view.backgroundColor = .red
         self.tabarCollectionView.addSubview(view)
         view.fillSuperview()
     }
@@ -166,7 +180,7 @@ extension Tabar: UICollectionViewDataSource, UICollectionViewDelegate, UICollect
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
 
-        return CGSize(width: 100, height: 60)
+        return CGSize(width: 100, height: 30)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {

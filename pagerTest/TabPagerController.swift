@@ -145,12 +145,12 @@ extension TabPagerController:UIPageViewControllerDelegate,UIPageViewControllerDa
                 if let controllerIndex = orderedViewControllers.index(of: controller){
                     tabPagerDelegate.tabPager(self, currentController: controller, currentIndex:controllerIndex)
                     let indexPath = IndexPath(row: controllerIndex, section: 0)
-                    tabView.tabarCollectionView.scrollToItem(at: indexPath, at: UICollectionViewScrollPosition.centeredHorizontally, animated: true)
-                    tabView.tabarCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition.centeredHorizontally)
+                    tabView.tabarCollectionView.scrollToItem(at: indexPath, at: UICollectionViewScrollPosition.left, animated: true)
+                    tabView.tabarCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: UICollectionViewScrollPosition.left)
                     
                     if let currentCell = tabView.tabarCollectionView.cellForItem(at: indexPath){
 
-                        self.tabView.horizontalBarLeftAnchorConstraint?.constant = (currentCell.frame.origin.x)
+                        self.tabView.horizontalBarLeftAnchorConstraint?.constant = (currentCell.frame.minX)
                         print(currentCell.frame.minX)
                         self.tabView.horizontalBarWidthAnchorConstraint?.constant = (currentCell.frame.width)
                         
